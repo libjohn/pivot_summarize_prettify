@@ -48,9 +48,9 @@ pivot longer so that I can gather summary statistics
 
 ```{r}
 economics |>  
-  sample_n(25) |> 
   mutate(my_era = lubridate::year(date) < 1986) |> 
-  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
+  sample_n(10)
 
 ```
 
