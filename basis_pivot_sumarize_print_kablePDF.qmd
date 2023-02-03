@@ -58,7 +58,6 @@ gather summary statistics
 
 ```{r}
 economics |>
-  sample_n(25) |> 
   mutate(my_era = lubridate::year(date) < 1986) |> 
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
@@ -69,7 +68,6 @@ pivot wider so that a data frame can be printed in a specific manner
 
 ```{r}
 economics |>
-  sample_n(25) |> 
   mutate(my_era = lubridate::year(date) < 1986) |> 
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
@@ -81,7 +79,6 @@ print data frame in a specific manner
 
 ```{r}
 economics |> 
-  sample_n(25) |> 
   mutate(my_era = lubridate::year(date) < 1986) |> 
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
