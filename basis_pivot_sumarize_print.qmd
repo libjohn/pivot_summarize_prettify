@@ -8,6 +8,8 @@ editor: source
 ---
 
 ```{r}
+#| message: false
+#| warning: false
 library(tidyverse)
 library(gt)
 ```
@@ -21,8 +23,7 @@ pivot longer so that I can gather summary statistics
 
 ```{r}
 economics |>  
-  sample_n(25) |> 
-  mutate(my_era = lubridate::year(date) < 1986) |> 
+  mutate(my_era = lubridate::year(date) < 1980) |> 
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") 
 
 ```
@@ -31,8 +32,7 @@ gather summary statistics
 
 ```{r}
 economics |>
-  mutate(my_era = lubridate::year(date) < 1986) |> 
-  sample_n(25) |> 
+  mutate(my_era = lubridate::year(date) < 1980) |> 
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
   summarise(my_mean = mean(value)) 
@@ -42,8 +42,7 @@ pivot wider so that a data frame can be printed in a specific manner
 
 ```{r}
 economics |>
-  mutate(my_era = lubridate::year(date) < 1986) |> 
-  sample_n(25) |> 
+  mutate(my_era = lubridate::year(date) < 1980) |> 
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
   summarise(my_mean = mean(value)) |> 
@@ -54,8 +53,7 @@ print data frame in a specific manner
 
 ```{r}
 economics |> 
-  mutate(my_era = lubridate::year(date) < 1986) |> 
-  sample_n(25) |> 
+  mutate(my_era = lubridate::year(date) < 1980) |> 
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
   summarise(my_mean = mean(value)) |> 
@@ -71,8 +69,7 @@ https://gt.rstudio.com/  is really well documented
 
 ```{r}
 economics |> 
-  mutate(my_era = if_else(lubridate::year(date) < 1986, "Xgen", "postgen")) |>   
-  sample_n(25) |> 
+  mutate(my_era = if_else(lubridate::year(date) < 1980, "Xgen", "postgen")) |>   
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
   summarise(my_mean = mean(value), .groups = "drop") |> 
@@ -85,7 +82,7 @@ economics |>
   tab_stubhead(label = "Indicator") |> 
   tab_spanner(
     label = "X-era",
-    columns = c(postgen, Xgen)
+    columns = c(Xgen, postgen)
   )
 ```
 
