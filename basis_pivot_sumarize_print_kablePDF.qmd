@@ -1,0 +1,90 @@
+---
+title: "Untitled"
+format: 
+  pdf:
+    df-print: kable
+editor: source
+---
+
+** Especially on Windows, run `quarto install tinytex` in the terminal.  This may take a while.  More info here: https://quarto.org/docs/output-formats/pdf-engine.html
+
+MacOS and Unix may have different requirements.
+
+ALSO:  Use {kableExtra} to stylize and manipulate your table (headers, subtitles, totals, LaTeX features, etc.)
+Alternative to {kableExtra} is {flextable}  See more at https://davidgohel.github.io/flextable/reference/index.html    AND  
+https://ardata-fr.github.io/flextable-book/
+
+LAST bit of advice.  I'm not a regulare PDF document producer and hence I'm not familair with all that {kableExtra} or {flextable} can do.  But what they do is similar to {gt}.  The difference is that {gt} output is not suitable for PDF.  Inanycase, since i am familar with {gt} I will show you some conceptual table editing.  Youc an figure out how you do that with {kableExtra} or {flextable}.  I suspect {flextable} has better documentation.  See my example at the bottom of `basis_pivot_sumarize_print.qmd`.  In all cases, here and above, besure to render the document to get the full effect.
+
+```{r}
+library(tidyverse)
+```
+
+here's a summary
+
+```{r}
+starwars |> 
+  select(name:hair_color) |> 
+  slice_head(n = 8)
+```
+
+
+```{r}
+my_special_df <- starwars |> 
+  drop_na(mass, height) |> 
+  mutate(species = fct_lump_min(species, 3)) |> 
+  select(name:hair_color, species) |>  
+  group_by(species) |> 
+  summarise(mean(height), sd(mass))
+my_special_df
+```
+
+```{r}
+economics |> 
+  sample_n(25)
+```
+
+pivot longer so that I can gather summary statistics
+
+```{r}
+economics |>  
+  sample_n(25) |> 
+  mutate(my_era = lubridate::year(date) < 1986) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") 
+
+```
+
+gather summary statistics
+
+```{r}
+economics |>
+  sample_n(25) |> 
+  mutate(my_era = lubridate::year(date) < 1986) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
+  group_by(my_era, my_variable) |> 
+  summarise(my_mean = mean(value)) 
+```
+
+pivot wider so that a data frame can be printed in a specific manner
+
+```{r}
+economics |>
+  sample_n(25) |> 
+  mutate(my_era = lubridate::year(date) < 1986) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
+  group_by(my_era, my_variable) |> 
+  summarise(my_mean = mean(value)) |> 
+  pivot_wider(names_from = my_era, values_from = my_mean)
+```
+
+print data frame in a specific manner
+
+```{r}
+economics |> 
+  sample_n(25) |> 
+  mutate(my_era = lubridate::year(date) < 1986) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
+  group_by(my_era, my_variable) |> 
+  summarise(my_mean = mean(value)) |> 
+  pivot_wider(names_from = my_era, values_from = my_mean)
+```

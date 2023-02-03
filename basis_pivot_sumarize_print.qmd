@@ -1,0 +1,91 @@
+---
+title: "example display table"
+author: "john"
+format: 
+  html:
+    df-print: paged
+editor: source
+---
+
+```{r}
+library(tidyverse)
+library(gt)
+```
+
+```{r}
+economics |> 
+  sample_n(25)
+```
+
+pivot longer so that I can gather summary statistics
+
+```{r}
+economics |>  
+  sample_n(25) |> 
+  mutate(my_era = lubridate::year(date) < 1986) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") 
+
+```
+
+gather summary statistics
+
+```{r}
+economics |>
+  mutate(my_era = lubridate::year(date) < 1986) |> 
+  sample_n(25) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
+  group_by(my_era, my_variable) |> 
+  summarise(my_mean = mean(value)) 
+```
+
+pivot wider so that a data frame can be printed in a specific manner
+
+```{r}
+economics |>
+  mutate(my_era = lubridate::year(date) < 1986) |> 
+  sample_n(25) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
+  group_by(my_era, my_variable) |> 
+  summarise(my_mean = mean(value)) |> 
+  pivot_wider(names_from = my_era, values_from = my_mean)
+```
+
+print data frame in a specific manner
+
+```{r}
+economics |> 
+  mutate(my_era = lubridate::year(date) < 1986) |> 
+  sample_n(25) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
+  group_by(my_era, my_variable) |> 
+  summarise(my_mean = mean(value)) |> 
+  pivot_wider(names_from = my_era, values_from = my_mean)
+```
+
+
+## editing tables with {gt}
+
+this is how you make the table pretty.  If you need LaTeX or PDF documents, use similar concepts as {gt} but you'll youse {kableExtra} or {flextable} isntead.  See `basis_pivot_sumarize_print_kablePDF.qmd` for more information.
+
+https://gt.rstudio.com/  is really well documented
+
+```{r}
+economics |> 
+  mutate(my_era = if_else(lubridate::year(date) < 1986, "Xgen", "postgen")) |>   
+  sample_n(25) |> 
+  pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
+  group_by(my_era, my_variable) |> 
+  summarise(my_mean = mean(value), .groups = "drop") |> 
+  pivot_wider(names_from = my_era, values_from = my_mean) |> 
+  gt(rowname_col = "my_variable") |> 
+  tab_header(
+    title = "my special table",
+    subtitle = "about economics data"
+  ) |> 
+  tab_stubhead(label = "Indicator") |> 
+  tab_spanner(
+    label = "X-era",
+    columns = c(postgen, Xgen)
+  )
+```
+
