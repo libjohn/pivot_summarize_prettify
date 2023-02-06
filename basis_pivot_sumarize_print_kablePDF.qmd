@@ -119,7 +119,7 @@ economics |>
   mutate(my_era = lubridate::year(date) < 1980) |> 
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
-  summarise(my_mean = mean(value)) |> 
+  summarise(my_mean = mean(value))  |> # , sum(value, na.rm = TRUE), sd(value)) 
   pivot_wider(names_from = my_era, values_from = my_mean)
 ```
 

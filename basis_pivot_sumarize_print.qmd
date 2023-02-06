@@ -73,6 +73,7 @@ economics |>
   pivot_longer(cols = pce:unemploy, names_to = "my_variable", values_to = "value") |> 
   group_by(my_era, my_variable) |> 
   summarise(my_mean = mean(value), .groups = "drop") |> 
+  # mutate(my_era = if_else(my_era == "postgen", 1, 0)) |> 
   pivot_wider(names_from = my_era, values_from = my_mean) |> 
   gt(rowname_col = "my_variable") |> 
   tab_header(
