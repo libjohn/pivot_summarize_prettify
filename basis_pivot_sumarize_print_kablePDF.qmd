@@ -76,8 +76,9 @@ starwars |>
 ```{r}
 starwars |> 
   select(where(is.character), -name) |> 
-  drop_na(hair_color, eye_color, species, gender, sex) |> 
+  # drop_na(hair_color, eye_color, species, gender, sex) |> 
   pivot_longer(cols = -c(gender, sex), names_to = "category") |> 
+  drop_na(value) |> 
   group_by(category, sex, gender, value) |> 
   summarise(percentage = n(), total = n(), .groups = "drop") |> 
   mutate(percentage = percentage / sum(percentage)) |>
