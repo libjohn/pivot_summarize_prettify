@@ -62,7 +62,20 @@ starwars |>
 
 ```{r}
 starwars |> 
-  select(where(is.character)) |> 
+  select(hair_color, eye_color, species, gender, sex) |> 
+  drop_na(hair_color, eye_color, species, gender, sex) |> 
+  pivot_longer(-c(sex, gender), names_to = "category") |> 
+  count(category, gender) |> 
+  group_by(category, gender, n) |> 
+  summarise(percentage = n(), .groups = "drop") |>  
+  mutate(percentage = percentage / sum(percentage)) |> 
+  arrange(category, gender, -percentage)
+```
+
+
+```{r}
+starwars |> 
+  select(where(is.character), -name) |> 
   drop_na(hair_color, eye_color, species, gender, sex) |> 
   pivot_longer(cols = -c(gender, sex), names_to = "category") |> 
   group_by(category, gender, value) |> 
